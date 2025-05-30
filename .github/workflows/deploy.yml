@@ -1,11 +1,11 @@
 name: Deploy to EC2
 
-#on:
-  #push:
-    #branches:
-     # - new  # Change this to your target branch
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - new  # Change this to your target branch
+#on:
+  #workflow_dispatch:
 
 jobs:
   deploy:
