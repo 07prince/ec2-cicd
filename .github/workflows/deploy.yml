@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /home/ubuntu/knockes_backend  # ⬅️ update this path
+            cd /home/ubuntu  # ⬅️ update this path
             git pull origin feature/user-management-prod
             # ⬅️ if you're using virtualenv
             pip install -r requirements.txt
