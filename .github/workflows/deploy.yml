@@ -23,8 +23,8 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /home/ubuntu  # ⬅️ update this path
-            git pull origin feature/user-management-prod
+            cd /home/ubuntu/code  # ⬅️ update this path
+            git pull origin new
             # ⬅️ if you're using virtualenv
             pip install -r requirements.txt
             # sudo systemctl restart gunicorn  # ⬅️ or your custom Gunicorn service name
