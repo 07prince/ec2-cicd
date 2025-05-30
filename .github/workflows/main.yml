@@ -1,0 +1,39 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - new  # Your target branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            if [ ! -d "/home/ubuntu/code/.git" ]; then
+              echo "Repo not found. Cloning fresh..."
+              git clone -b new https://github.com/07prince/ec2-cicd.git /home/ubuntu/code
+            else
+              echo "Repo found. Pulling latest changes..."
+              cd /home/ubuntu/code
+              git pull origin new
+            fi
+
+            # Optional: install dependencies if needed
+            # cd /home/ubuntu/code
+            # pip3 install -r requirements.txt
+
+            echo "Restarting Gunicorn service..."
+            #sudo systemctl restart gunicorn
+          EOF
