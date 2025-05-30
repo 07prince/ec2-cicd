@@ -3,9 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - new  # Change this to your target branch
-#on:
-  #workflow_dispatch:
+      - new  # Your target branch
 
 jobs:
   deploy:
@@ -23,9 +21,19 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /home/ubuntu/code  # ⬅️ update this path
-            git pull origin new
-            # ⬅️ if you're using virtualenv
-            #pip install -r requirements.txt
-            # sudo systemctl restart gunicorn  # ⬅️ or your custom Gunicorn service name
+            if [ ! -d "/home/ubuntu/code/.git" ]; then
+              echo "Repo not found. Cloning fresh..."
+              git clone -b new https://github.com/07prince/ec2-cicd.git /home/ubuntu/code
+            else
+              echo "Repo found. Pulling latest changes..."
+              cd /home/ubuntu/code
+              git pull origin new
+            fi
+
+            # Optional: install dependencies if needed
+            # cd /home/ubuntu/code
+            # pip3 install -r requirements.txt
+
+            echo "Restarting Gunicorn service..."
+            #sudo systemctl restart gunicorn
           EOF
